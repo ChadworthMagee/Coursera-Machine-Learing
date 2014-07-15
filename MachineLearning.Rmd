@@ -1,0 +1,4 @@
+Prediction Assignment Writeup
+========================================================
+
+The task was to design a model to predict the acitivity being carried out based on sensor data from Human activity trackers
