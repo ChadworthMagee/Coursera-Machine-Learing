@@ -18,7 +18,7 @@ https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
 
 ## Dependencies
 
-* Requries reshape2 package.
+* Requries reshape2 and e1071 packages.
 
 
 ## Notes
