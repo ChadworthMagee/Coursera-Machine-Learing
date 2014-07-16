@@ -1,9 +1,10 @@
 Prediction Assignment Writeup
 ========================================================
 
-The task was to design a model to predict the acitivity being carried out based on sensor data from Human activity trackers
+The task was to design a model to predict the acitivity being carried out based on sensor data from Human activity trackers. Random Forest model was used to build the training model. Note that pml-training.csv and pml-testing.csv must be stored in current directory.
 
 
+### Pre-processing
 ```{r}
 library(caret)
 #read trainning data and remove missing values
@@ -11,30 +12,30 @@ inTrainData <- read.csv("pml-training.csv",na.strings=c("NA",""))
 missingVals<-apply(inTrainData,2, function (x) {sum (is.na(x))})
 tr_temp<-inTrainData[,missingVals==0]
 trainDataFull<-tr_temp[,-(1:7)]
-#data splitting
+#data splitting with 70% for traning data and 30% for cross validation.
 inTrain<-createDataPartition(y=trainDataFull$classe,p=0.7,list=FALSE)
 trainData<-trainDataFull[inTrain,]
 cvData<-trainDataFull[-inTrain,]
 ```
-### The model
+### Build the predict model
 Random Forests model.
 ```{r}
-model<-train(trainData[,-53],trainData$classe,method="rf",trControl=trainControl(method="oob",number=4,allowParallel=TRUE))
-model
+modelFit<-train(trainData[,-53],trainData$classe,method="rf",trControl=trainControl(method="oob",number=4,allowParallel=TRUE))
+modelFit
 ```
 
 #### Cross Validation
 An estimate of the out-of-sample error.
 ```{r}
-cvAns<-predict(model,cvData[,-53])
-numCorrect<-sum(cvAns==cvData[,53])
-1-numCorrect/length(cvAns)
+cv_predictions<-predict(modelFit,cvData[,-53])
+confusionMatrix(cv_predictions,cvData$classe)
+
 ```
 
 ### Prediction Code
 ```{r}
 pmlTest <- read.csv("pml-testing.csv", na.strings=c("NA",""))
 testData<-pmlTest[,names(pmlTest)%in%names(trainDataFull)]
-answers<-predict(model,testData)
-answers
+predictions<-predict(modelFit,testData)
+predictions
 ```
